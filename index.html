@@ -1,0 +1,2771 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KidSpark — Preschool Platform Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ================================================
+   DESIGN TOKENS — CSS VARIABLES
+   ================================================ */
+
+:root, [data-theme="dark"] {
+  /* Backgrounds */
+  --bg-base:      #0F0F10;
+  --bg-card:      #1A1A1C;
+  --bg-elevated:  #222326;
+  --bg-glass:     rgba(26,26,28,0.72);
+
+  /* Text */
+  --text-primary:   #FFFFFF;
+  --text-secondary: #A0A0A0;
+  --text-tertiary:  #5A5A5E;
+
+  /* Primary */
+  --primary-main:    #B6FF3B;
+  --primary-pressed: #9FE62F;
+  --primary-glow:    rgba(182,255,59,0.18);
+  --primary-subtle:  rgba(182,255,59,0.08);
+
+  /* Secondary */
+  --secondary-blue:   #4DA6FF;
+  --secondary-purple: #B66DFF;
+  --accent-yellow:    #FFD84D;
+
+  /* Semantic */
+  --success: #4CAF50;
+  --warning: #FFD84D;
+  --error:   #FF5C5C;
+  --info:    #4DA6FF;
+
+  /* Overlays */
+  --overlay-soft:  rgba(255,255,255,0.04);
+  --overlay-mid:   rgba(255,255,255,0.08);
+  --border-subtle: rgba(255,255,255,0.07);
+  --border-card:   rgba(255,255,255,0.1);
+
+  /* Shadows */
+  --shadow-card:   0 4px 24px rgba(0,0,0,0.4);
+  --shadow-float:  0 8px 40px rgba(0,0,0,0.6);
+  --shadow-glow:   0 0 32px rgba(182,255,59,0.22);
+  --shadow-blue:   0 0 20px rgba(77,166,255,0.25);
+
+  /* Radius */
+  --r-sm:  8px;
+  --r-md:  12px;
+  --r-lg:  16px;
+  --r-xl:  20px;
+  --r-pill:9999px;
+
+  /* Spacing (4pt grid) */
+  --s-1: 4px;   --s-2: 8px;   --s-3: 12px;
+  --s-4: 16px;  --s-5: 20px;  --s-6: 24px;
+
+  /* Duration */
+  --dur-fast:   150ms;
+  --dur-med:    280ms;
+  --dur-slow:   450ms;
+  --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+  --ease-smooth: cubic-bezier(0.4,0,0.2,1);
+  --ease-snap:   cubic-bezier(0.2,0,0,1);
+
+  /* Font sizes */
+  --text-h1:      28px;
+  --text-h2:      22px;
+  --text-h3:      18px;
+  --text-body:    16px;
+  --text-caption: 12px;
+  --text-micro:   10px;
+}
+
+[data-theme="light"] {
+  --bg-base:       #F7F7F8;
+  --bg-card:       #FFFFFF;
+  --bg-elevated:   #F0F0F2;
+  --bg-glass:      rgba(255,255,255,0.82);
+
+  --text-primary:   #121212;
+  --text-secondary: #6B6B6B;
+  --text-tertiary:  #AAAAAA;
+
+  --primary-main:    #7CFF00;
+  --primary-pressed: #6AE000;
+  --primary-glow:    rgba(124,255,0,0.15);
+  --primary-subtle:  rgba(124,255,0,0.08);
+
+  --overlay-soft:  rgba(0,0,0,0.03);
+  --overlay-mid:   rgba(0,0,0,0.06);
+  --border-subtle: rgba(0,0,0,0.06);
+  --border-card:   rgba(0,0,0,0.09);
+
+  --shadow-card:  0 2px 16px rgba(0,0,0,0.08);
+  --shadow-float: 0 8px 32px rgba(0,0,0,0.14);
+  --shadow-glow:  0 0 24px rgba(124,255,0,0.2);
+  --shadow-blue:  0 0 16px rgba(77,166,255,0.2);
+}
+
+/* ================================================
+   RESET + BASE
+   ================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.45;
+  transition: background var(--dur-med) var(--ease-smooth),
+              color var(--dur-med) var(--ease-smooth);
+}
+
+/* ================================================
+   GLOBAL LAYOUT
+   ================================================ */
+
+.ds-shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+}
+
+/* ——— Sidebar ——— */
+.ds-nav {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-6) 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.ds-nav::-webkit-scrollbar { display: none; }
+
+.ds-nav-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 0 var(--s-5) var(--s-6);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.logo-mark {
+  width: 36px; height: 36px;
+  border-radius: var(--r-md);
+  background: var(--primary-main);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-glow);
+}
+
+.logo-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+.logo-text span {
+  display: block;
+  font-size: var(--text-caption);
+  font-weight: 400;
+  color: var(--text-secondary);
+  letter-spacing: 0;
+}
+
+.ds-nav-group {
+  margin-top: var(--s-5);
+  padding: 0 var(--s-3);
+}
+
+.ds-nav-label {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: var(--s-2) var(--s-2) var(--s-1);
+}
+
+.ds-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-smooth);
+  text-decoration: none;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 2px;
+}
+
+.ds-nav-item:hover {
+  background: var(--overlay-soft);
+  color: var(--text-primary);
+}
+
+.ds-nav-item.active {
+  background: var(--primary-subtle);
+  color: var(--primary-main);
+  font-weight: 600;
+}
+
+.nav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ——— Main content ——— */
+.ds-main {
+  padding: var(--s-6) 40px 80px;
+  max-width: 1100px;
+}
+
+/* ——— Theme Toggle ——— */
+.theme-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg-base);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: var(--s-3) 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  backdrop-filter: blur(12px);
+  margin: calc(-1 * var(--s-6)) -40px var(--s-6);
+}
+
+.theme-bar h1 {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-family: 'Space Mono', monospace;
+}
+
+.toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.toggle {
+  position: relative;
+  width: 48px; height: 26px;
+  background: var(--overlay-mid);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-pill);
+  cursor: pointer;
+  transition: background var(--dur-fast);
+  flex-shrink: 0;
+}
+
+.toggle.on { background: var(--primary-main); border-color: transparent; }
+
+.toggle-knob {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  transition: transform var(--dur-fast) var(--ease-spring);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.toggle.on .toggle-knob { transform: translateX(22px); background: var(--bg-base); }
+
+/* ================================================
+   SECTION HEADERS
+   ================================================ */
+
+.section {
+  margin-bottom: 64px;
+  scroll-margin-top: 80px;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-4);
+  margin-bottom: var(--s-6);
+  padding-bottom: var(--s-4);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.section-title {
+  font-size: var(--text-h2);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.section-tag {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--primary-main);
+  background: var(--primary-subtle);
+  padding: 2px 10px;
+  border-radius: var(--r-pill);
+  font-family: 'Space Mono', monospace;
+}
+
+.section-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: var(--s-6);
+  max-width: 580px;
+  line-height: 1.6;
+}
+
+/* ================================================
+   1. COLOR TOKENS
+   ================================================ */
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: var(--s-3);
+}
+
+.color-swatch {
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.swatch-block {
+  height: 64px;
+  position: relative;
+}
+
+.swatch-info {
+  padding: var(--s-2) var(--s-3);
+  background: var(--bg-card);
+}
+
+.swatch-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: 'Space Mono', monospace;
+}
+
+.swatch-hex {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-family: 'Space Mono', monospace;
+}
+
+/* ================================================
+   2. TYPOGRAPHY
+   ================================================ */
+
+.type-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-6);
+  padding: var(--s-5) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.type-meta {
+  width: 160px;
+  flex-shrink: 0;
+}
+
+.type-token {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary-main);
+  font-family: 'Space Mono', monospace;
+  margin-bottom: 4px;
+}
+
+.type-spec {
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+}
+
+/* ================================================
+   3. SPACING
+   ================================================ */
+
+.spacing-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.spacing-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.spacing-bar {
+  background: var(--primary-main);
+  border-radius: 3px;
+  height: 20px;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+.spacing-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: 'Space Mono', monospace;
+  width: 60px;
+}
+
+.spacing-token {
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+}
+
+/* ================================================
+   4. COMPONENTS — CARDS
+   ================================================ */
+
+.component-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-5);
+  align-items: flex-start;
+}
+
+/* Base Card */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-xl);
+  padding: var(--s-4);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--dur-fast) var(--ease-spring),
+              box-shadow var(--dur-fast) var(--ease-smooth);
+  cursor: pointer;
+}
+
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-float); }
+.card:active { transform: scale(0.96); transition-duration: var(--dur-fast); }
+
+.card.card-elevated {
+  background: var(--bg-elevated);
+}
+
+.card.card-glow {
+  border-color: var(--primary-main);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+}
+
+/* ================================================
+   5. BUTTONS
+   ================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-2);
+  height: 48px;
+  padding: 0 var(--s-6);
+  border-radius: var(--r-pill);
+  font-family: 'DM Sans', sans-serif;
+  font-size: var(--text-body);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: transform var(--dur-fast) var(--ease-spring),
+              box-shadow var(--dur-fast),
+              background var(--dur-fast),
+              opacity var(--dur-fast);
+}
+
+.btn:active { transform: scale(0.96); }
+
+.btn-primary {
+  background: var(--primary-main);
+  color: #0F0F10;
+  box-shadow: 0 4px 20px rgba(182,255,59,0.3);
+}
+
+.btn-primary:hover { background: var(--primary-pressed); box-shadow: 0 6px 28px rgba(182,255,59,0.4); transform: translateY(-1px); }
+
+.btn-secondary {
+  background: var(--overlay-mid);
+  color: var(--text-primary);
+  border: 1px solid var(--border-card);
+}
+
+.btn-secondary:hover { background: var(--overlay-soft); border-color: var(--text-secondary); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--primary-main);
+  border: 1.5px solid var(--primary-main);
+}
+
+.btn-ghost:hover { background: var(--primary-subtle); }
+
+.btn-danger {
+  background: rgba(255,92,92,0.12);
+  color: var(--error);
+  border: 1.5px solid rgba(255,92,92,0.3);
+}
+
+.btn-sm { height: 36px; padding: 0 var(--s-4); font-size: 14px; }
+
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ================================================
+   6. CHIPS
+   ================================================ */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  height: 32px;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-pill);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid var(--border-card);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  transition: all var(--dur-fast) var(--ease-spring);
+}
+
+.chip:hover { border-color: var(--text-secondary); color: var(--text-primary); transform: translateY(-1px); }
+
+.chip.active {
+  background: var(--primary-subtle);
+  border-color: var(--primary-main);
+  color: var(--primary-main);
+  font-weight: 600;
+}
+
+.chip.active:hover { background: rgba(182,255,59,0.14); }
+
+.chip-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ================================================
+   7. BOTTOM NAVIGATION
+   ================================================ */
+
+.bottom-nav-wrap {
+  position: relative;
+  background: var(--bg-elevated);
+  border-radius: 28px;
+  padding: 4px;
+  box-shadow: var(--shadow-float);
+  border: 1px solid var(--border-card);
+  display: inline-flex;
+  gap: 2px;
+  width: 340px;
+  max-width: 100%;
+  backdrop-filter: blur(20px);
+}
+
+.bnav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 56px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-spring);
+  position: relative;
+}
+
+.bnav-item:hover { background: var(--overlay-soft); }
+
+.bnav-item.active {
+  background: var(--primary-main);
+}
+
+.bnav-item.active .bnav-icon { color: #0F0F10; }
+.bnav-item.active .bnav-label { color: #0F0F10; font-weight: 700; }
+
+.bnav-icon {
+  font-size: 20px;
+  color: var(--text-secondary);
+  line-height: 1;
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+
+.bnav-item:active .bnav-icon { transform: scale(0.88); }
+
+.bnav-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.bnav-badge {
+  position: absolute;
+  top: 8px; right: 14px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--error);
+  border: 2px solid var(--bg-elevated);
+}
+
+/* ================================================
+   8. FAB
+   ================================================ */
+
+.fab {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--primary-main);
+  color: #0F0F10;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-float), var(--shadow-glow);
+  transition: all var(--dur-fast) var(--ease-spring);
+}
+
+.fab:hover { transform: scale(1.08) rotate(8deg); box-shadow: var(--shadow-float), 0 0 40px rgba(182,255,59,0.35); }
+.fab:active { transform: scale(0.94); }
+
+.fab-blue {
+  background: var(--secondary-blue);
+  box-shadow: var(--shadow-float), var(--shadow-blue);
+}
+
+.fab-blue:hover { box-shadow: var(--shadow-float), 0 0 40px rgba(77,166,255,0.35); }
+
+/* ================================================
+   9. FEED CARD
+   ================================================ */
+
+.feed-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  max-width: 360px;
+  width: 100%;
+  transition: transform var(--dur-med) var(--ease-spring),
+              box-shadow var(--dur-med);
+  cursor: pointer;
+}
+
+.feed-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-float); }
+.feed-card:active { transform: scale(0.97); }
+
+.feed-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-4);
+}
+
+.avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  font-weight: 700;
+  font-family: 'Space Mono', monospace;
+}
+
+.avatar-green  { background: rgba(182,255,59,0.18); color: var(--primary-main); }
+.avatar-blue   { background: rgba(77,166,255,0.18); color: var(--secondary-blue); }
+.avatar-yellow { background: rgba(255,216,77,0.18); color: var(--accent-yellow); }
+.avatar-purple { background: rgba(182,109,255,0.18); color: var(--secondary-purple); }
+
+.feed-meta { flex: 1; }
+.feed-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.feed-time { font-size: var(--text-caption); color: var(--text-secondary); }
+
+.feed-badge {
+  display: flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: var(--r-sm);
+  font-size: 14px;
+}
+
+.feed-media {
+  margin: 0 var(--s-4) var(--s-3);
+  border-radius: var(--r-lg);
+  background: var(--bg-elevated);
+  aspect-ratio: 16/9;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.media-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--text-tertiary);
+  font-size: 28px;
+}
+
+.media-placeholder span {
+  font-size: var(--text-caption);
+  font-weight: 500;
+}
+
+.media-tag {
+  position: absolute;
+  top: var(--s-2);
+  left: var(--s-2);
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  backdrop-filter: blur(8px);
+}
+
+.feed-content {
+  padding: 0 var(--s-4) var(--s-3);
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.feed-content strong { color: var(--text-primary); }
+
+.feed-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-4);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.feed-action-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px var(--s-3);
+  border-radius: var(--r-pill);
+  background: var(--overlay-soft);
+  border: none; cursor: pointer;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-secondary);
+  font-family: 'DM Sans', sans-serif;
+  transition: all var(--dur-fast) var(--ease-spring);
+}
+
+.feed-action-btn:hover { background: var(--overlay-mid); color: var(--text-primary); transform: scale(1.04); }
+.feed-action-btn:active { transform: scale(0.95); }
+
+/* ================================================
+   10. SUMMARY CARD (2x2 metric grid)
+   ================================================ */
+
+.summary-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-xl);
+  padding: var(--s-4);
+  box-shadow: var(--shadow-card);
+  width: 280px;
+}
+
+.summary-title {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: var(--s-4);
+  display: flex; align-items: center; gap: var(--s-2);
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-3);
+}
+
+.metric-cell {
+  background: var(--bg-elevated);
+  border-radius: var(--r-lg);
+  padding: var(--s-3);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid var(--border-subtle);
+  transition: transform var(--dur-fast) var(--ease-spring);
+  cursor: pointer;
+}
+
+.metric-cell:hover { transform: scale(1.03); }
+
+.metric-icon { font-size: 18px; }
+.metric-value {
+  font-size: var(--text-h2);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+.metric-label {
+  font-size: var(--text-caption);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.metric-cell.accent-green { border-color: rgba(76,175,80,0.3); }
+.metric-cell.accent-green .metric-value { color: var(--success); }
+.metric-cell.accent-blue  { border-color: rgba(77,166,255,0.3); }
+.metric-cell.accent-blue  .metric-value { color: var(--secondary-blue); }
+.metric-cell.accent-yellow { border-color: rgba(255,216,77,0.3); }
+.metric-cell.accent-yellow .metric-value { color: var(--accent-yellow); }
+.metric-cell.accent-red   { border-color: rgba(255,92,92,0.3); }
+.metric-cell.accent-red   .metric-value { color: var(--error); }
+
+/* ================================================
+   11. STATUS CARD
+   ================================================ */
+
+.status-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-xl);
+  padding: var(--s-4);
+  width: 280px;
+  box-shadow: var(--shadow-card);
+}
+
+.status-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--s-4);
+}
+
+.status-heading {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.status-pill.present { background: rgba(76,175,80,0.15); color: var(--success); }
+.status-pill.absent  { background: rgba(255,92,92,0.12); color: var(--error); }
+.status-pill.late    { background: rgba(255,216,77,0.15); color: var(--warning); }
+.status-pill::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.status-kids {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.kid-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-md);
+  background: var(--overlay-soft);
+  transition: background var(--dur-fast);
+  cursor: pointer;
+}
+
+.kid-row:hover { background: var(--overlay-mid); }
+
+.kid-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.mood-icon { font-size: 18px; }
+
+/* ================================================
+   12. MOTION DEMOS
+   ================================================ */
+
+.motion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--s-4);
+}
+
+.motion-demo {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-xl);
+  padding: var(--s-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+  cursor: pointer;
+}
+
+.motion-demo-label {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+.motion-demo-spec {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  font-family: 'Space Mono', monospace;
+  text-align: center;
+}
+
+.motion-target {
+  width: 48px; height: 48px;
+  border-radius: var(--r-lg);
+  background: var(--primary-main);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.motion-target.blue { background: var(--secondary-blue); }
+.motion-target.yellow { background: var(--accent-yellow); }
+
+/* Tap */
+.tap-demo:active .motion-target { transform: scale(0.96); transition: transform 150ms; }
+
+/* Bounce success */
+@keyframes bounce-success {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.25); }
+  60%  { transform: scale(0.9); }
+  80%  { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+.bounce .motion-target { animation: bounce-success 0.5s var(--ease-spring); }
+
+/* Shake error */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+.shake .motion-target { animation: shake 0.4s ease; }
+
+/* Pulse loading */
+@keyframes pulse-load {
+  0%, 100% { opacity: 0.4; transform: scale(0.95); }
+  50%       { opacity: 1;   transform: scale(1.05); }
+}
+.pulse .motion-target { animation: pulse-load 1.2s var(--ease-smooth) infinite; }
+
+/* ================================================
+   13. SKELETON STATES
+   ================================================ */
+
+.skeleton-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-xl);
+  padding: var(--s-4);
+  width: 300px;
+  box-shadow: var(--shadow-card);
+}
+
+.skel {
+  background: linear-gradient(
+    90deg,
+    var(--overlay-soft) 25%,
+    var(--overlay-mid) 50%,
+    var(--overlay-soft) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--r-sm);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skel-circle { width: 40px; height: 40px; border-radius: 50%; }
+.skel-line { height: 12px; }
+.skel-media { width: 100%; height: 140px; border-radius: var(--r-lg); margin: var(--s-3) 0; }
+.skel-row { display: flex; align-items: center; gap: var(--s-3); margin-bottom: var(--s-3); }
+
+/* ================================================
+   14. EMPTY STATE
+   ================================================ */
+
+.empty-state {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-xl);
+  padding: 40px var(--s-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+  text-align: center;
+  width: 300px;
+  box-shadow: var(--shadow-card);
+}
+
+.empty-emoji {
+  font-size: 48px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+.empty-title {
+  font-size: var(--text-body);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.empty-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ================================================
+   15. DASHBOARD PATTERN
+   ================================================ */
+
+.phone-frame {
+  width: 280px;
+  background: var(--bg-base);
+  border-radius: 36px;
+  border: 3px solid var(--border-card);
+  box-shadow: var(--shadow-float);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.phone-status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.phone-body {
+  padding: 8px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 560px;
+  overflow: hidden;
+}
+
+.phone-greeting {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.phone-greeting span {
+  color: var(--primary-main);
+}
+
+/* Mini summary card */
+.mini-summary {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-lg);
+  padding: 12px;
+}
+
+.mini-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.mini-metric {
+  background: var(--bg-elevated);
+  border-radius: var(--r-md);
+  padding: 8px;
+}
+
+.mini-metric-val {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.mini-metric-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Next activity */
+.activity-strip {
+  background: linear-gradient(135deg, rgba(182,255,59,0.12), rgba(77,166,255,0.08));
+  border: 1px solid rgba(182,255,59,0.2);
+  border-radius: var(--r-lg);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.activity-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--r-md);
+  background: var(--primary-main);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.activity-info { flex: 1; }
+.activity-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+.activity-time { font-size: 11px; color: var(--primary-main); font-weight: 600; }
+
+/* Quick actions */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.quick-action {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-lg);
+  padding: 10px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-spring);
+}
+
+.quick-action:hover { background: var(--overlay-mid); transform: scale(1.06); }
+.quick-action:active { transform: scale(0.94); }
+
+.qa-icon { font-size: 20px; }
+.qa-label { font-size: 9px; font-weight: 600; color: var(--text-secondary); text-align: center; }
+
+/* Mini feed card */
+.mini-feed-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-lg);
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mini-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.mini-feed-text {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.mini-feed-text strong { color: var(--text-primary); }
+
+/* Phone bottom nav */
+.phone-bnav {
+  position: absolute;
+  bottom: 12px; left: 12px; right: 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-card);
+  border-radius: 20px;
+  padding: 4px;
+  display: flex;
+  backdrop-filter: blur(16px);
+}
+
+.phone-bnav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all var(--dur-fast) var(--ease-spring);
+}
+
+.phone-bnav-item.active {
+  background: var(--primary-main);
+}
+
+/* ================================================
+   16. ICON SYSTEM
+   ================================================ */
+
+.icon-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+}
+
+.icon-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-1);
+  padding: var(--s-3) var(--s-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-md);
+  min-width: 72px;
+  cursor: default;
+  transition: all var(--dur-fast) var(--ease-spring);
+}
+
+.icon-cell:hover { background: var(--overlay-mid); transform: translateY(-2px); }
+
+.icon-emoji { font-size: 24px; }
+.icon-name { font-size: 10px; color: var(--text-secondary); font-weight: 500; text-align: center; }
+
+/* ================================================
+   17. RADIUS DEMOS
+   ================================================ */
+
+.radius-demos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  align-items: flex-end;
+}
+
+.radius-demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.radius-shape {
+  width: 80px; height: 60px;
+  background: var(--primary-subtle);
+  border: 2px solid var(--primary-main);
+}
+
+.radius-label { font-size: var(--text-caption); color: var(--text-secondary); font-weight: 600; font-family: 'Space Mono', monospace; text-align: center; }
+
+/* ================================================
+   18. TOKEN TABLE
+   ================================================ */
+
+.token-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+}
+
+.token-table th {
+  text-align: left;
+  padding: var(--s-2) var(--s-4);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-family: 'Space Mono', monospace;
+}
+
+.token-table th:first-child { border-radius: var(--r-sm) 0 0 var(--r-sm); }
+.token-table th:last-child  { border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+
+.token-table td {
+  padding: var(--s-3) var(--s-4);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.token-table tr:last-child td { border-bottom: none; }
+.token-table tr:hover td { background: var(--overlay-soft); }
+
+.token-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: var(--primary-main);
+}
+
+/* ================================================
+   19. NOTIFICATION CARD
+   ================================================ */
+
+.notif-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-lg);
+  padding: var(--s-4);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  width: 320px;
+  box-shadow: var(--shadow-card);
+  transition: all var(--dur-fast) var(--ease-spring);
+  cursor: pointer;
+}
+
+.notif-card:hover { transform: translateX(4px); border-color: var(--primary-main); }
+
+.notif-icon-wrap {
+  width: 40px; height: 40px;
+  border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.notif-body { flex: 1; }
+.notif-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; }
+.notif-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+.notif-time { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
+
+/* ================================================
+   20. OFFLINE / ERROR STATE
+   ================================================ */
+
+.state-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--r-xl);
+  padding: var(--s-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+  text-align: center;
+  width: 240px;
+  box-shadow: var(--shadow-card);
+}
+
+.state-icon {
+  font-size: 40px;
+  padding: var(--s-4);
+  border-radius: 50%;
+  background: var(--overlay-soft);
+}
+
+.state-title { font-size: var(--text-body); font-weight: 700; color: var(--text-primary); }
+.state-desc  { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+/* ================================================
+   UTILS
+   ================================================ */
+
+.flex-wrap  { display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: flex-start; }
+.flex-col   { display: flex; flex-direction: column; gap: var(--s-3); }
+.label      { font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.8px; font-family: 'Space Mono', monospace; margin-bottom: var(--s-2); }
+.mt-4 { margin-top: var(--s-4); }
+
+/* figma tokens block */
+.code-block {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  padding: var(--s-4) var(--s-5);
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  overflow-x: auto;
+}
+
+.code-block .key   { color: var(--secondary-blue); }
+.code-block .val   { color: var(--primary-main); }
+.code-block .cmt   { color: var(--text-tertiary); }
+
+/* progress bar */
+.progress-track {
+  height: 6px;
+  background: var(--overlay-mid);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: var(--r-pill);
+  background: var(--primary-main);
+  box-shadow: 0 0 8px var(--primary-glow);
+  transition: width var(--dur-slow) var(--ease-snap);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-card); border-radius: var(--r-pill); }
+
+/* ================================================
+   RESPONSIVE TWEAKS
+   ================================================ */
+
+@media (max-width: 768px) {
+  .ds-shell { grid-template-columns: 1fr; }
+  .ds-nav   { display: none; }
+  .ds-main  { padding: var(--s-4); }
+  .theme-bar { padding: var(--s-3) var(--s-4); margin: calc(-1*var(--s-4)) calc(-1*var(--s-4)) var(--s-4); }
+}
+</style>
+</head>
+<body>
+
+<div class="ds-shell">
+
+<!-- ===== SIDEBAR NAV ===== -->
+<nav class="ds-nav">
+  <div class="ds-nav-logo">
+    <div class="logo-mark">🌟</div>
+    <div class="logo-text">KidSpark<span>Design System v1.0</span></div>
+  </div>
+
+  <div class="ds-nav-group">
+    <div class="ds-nav-label">Foundation</div>
+    <a class="ds-nav-item active" href="#colors" onclick="scrollTo('#colors')">
+      <div class="nav-dot" style="background:var(--primary-main)"></div> Colors
+    </a>
+    <a class="ds-nav-item" href="#typography">
+      <div class="nav-dot" style="background:var(--secondary-blue)"></div> Typography
+    </a>
+    <a class="ds-nav-item" href="#spacing">
+      <div class="nav-dot" style="background:var(--accent-yellow)"></div> Spacing
+    </a>
+    <a class="ds-nav-item" href="#radius">
+      <div class="nav-dot" style="background:var(--secondary-purple)"></div> Radius
+    </a>
+    <a class="ds-nav-item" href="#icons">
+      <div class="nav-dot" style="background:var(--success)"></div> Icons
+    </a>
+  </div>
+
+  <div class="ds-nav-group">
+    <div class="ds-nav-label">Components</div>
+    <a class="ds-nav-item" href="#cards"><div class="nav-dot" style="background:var(--primary-main)"></div> Cards</a>
+    <a class="ds-nav-item" href="#buttons"><div class="nav-dot" style="background:var(--secondary-blue)"></div> Buttons</a>
+    <a class="ds-nav-item" href="#chips"><div class="nav-dot" style="background:var(--accent-yellow)"></div> Chips</a>
+    <a class="ds-nav-item" href="#navigation"><div class="nav-dot" style="background:var(--success)"></div> Navigation</a>
+    <a class="ds-nav-item" href="#fab"><div class="nav-dot" style="background:var(--error)"></div> FAB</a>
+    <a class="ds-nav-item" href="#feed"><div class="nav-dot" style="background:var(--secondary-purple)"></div> Feed Card</a>
+    <a class="ds-nav-item" href="#summary"><div class="nav-dot" style="background:var(--info)"></div> Summary Card</a>
+    <a class="ds-nav-item" href="#status"><div class="nav-dot" style="background:var(--warning)"></div> Status Card</a>
+    <a class="ds-nav-item" href="#notifications"><div class="nav-dot" style="background:var(--primary-main)"></div> Notifications</a>
+  </div>
+
+  <div class="ds-nav-group">
+    <div class="ds-nav-label">System</div>
+    <a class="ds-nav-item" href="#motion"><div class="nav-dot" style="background:var(--primary-main)"></div> Motion</a>
+    <a class="ds-nav-item" href="#states"><div class="nav-dot" style="background:var(--secondary-blue)"></div> States</a>
+    <a class="ds-nav-item" href="#patterns"><div class="nav-dot" style="background:var(--accent-yellow)"></div> Patterns</a>
+    <a class="ds-nav-item" href="#tokens"><div class="nav-dot" style="background:var(--success)"></div> Figma Tokens</a>
+  </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="ds-main">
+
+  <!-- Theme Bar -->
+  <div class="theme-bar">
+    <h1>KidSpark — Design System</h1>
+    <div class="toggle-wrap">
+      <span>☀️ Light</span>
+      <div class="toggle" id="themeToggle" onclick="toggleTheme()">
+        <div class="toggle-knob"></div>
+      </div>
+      <span>🌙 Dark</span>
+    </div>
+  </div>
+
+  <!-- ================================================ -->
+  <!-- 01 COLORS                                        -->
+  <!-- ================================================ -->
+  <section class="section" id="colors">
+    <div class="section-header">
+      <h2 class="section-title">Color System</h2>
+      <span class="section-tag">01 / FOUNDATION</span>
+    </div>
+    <p class="section-desc">Token-based color system using CSS custom properties. Primary palette leads with a high-energy lime green that signals "active" and "alive" across all three apps.</p>
+
+    <div class="label">Backgrounds</div>
+    <div class="color-grid" style="margin-bottom:var(--s-5)">
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#0F0F10;border:1px solid var(--border-subtle)"></div>
+        <div class="swatch-info"><div class="swatch-name">bg/base</div><div class="swatch-hex">#0F0F10</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#1A1A1C"></div>
+        <div class="swatch-info"><div class="swatch-name">bg/card</div><div class="swatch-hex">#1A1A1C</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#222326"></div>
+        <div class="swatch-info"><div class="swatch-name">bg/elevated</div><div class="swatch-hex">#222326</div></div>
+      </div>
+    </div>
+
+    <div class="label">Primary & Accent</div>
+    <div class="color-grid" style="margin-bottom:var(--s-5)">
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#B6FF3B;box-shadow:0 0 24px rgba(182,255,59,0.35)"></div>
+        <div class="swatch-info"><div class="swatch-name">primary/main</div><div class="swatch-hex">#B6FF3B</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#9FE62F"></div>
+        <div class="swatch-info"><div class="swatch-name">primary/pressed</div><div class="swatch-hex">#9FE62F</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#4DA6FF"></div>
+        <div class="swatch-info"><div class="swatch-name">secondary/blue</div><div class="swatch-hex">#4DA6FF</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#FFD84D"></div>
+        <div class="swatch-info"><div class="swatch-name">accent/yellow</div><div class="swatch-hex">#FFD84D</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#B66DFF"></div>
+        <div class="swatch-info"><div class="swatch-name">secondary/purple</div><div class="swatch-hex">#B66DFF</div></div>
+      </div>
+    </div>
+
+    <div class="label">Semantic</div>
+    <div class="color-grid" style="margin-bottom:var(--s-5)">
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#4CAF50"></div>
+        <div class="swatch-info"><div class="swatch-name">success</div><div class="swatch-hex">#4CAF50</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#FFD84D"></div>
+        <div class="swatch-info"><div class="swatch-name">warning</div><div class="swatch-hex">#FFD84D</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#FF5C5C"></div>
+        <div class="swatch-info"><div class="swatch-name">error</div><div class="swatch-hex">#FF5C5C</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#4DA6FF"></div>
+        <div class="swatch-info"><div class="swatch-name">info</div><div class="swatch-hex">#4DA6FF</div></div>
+      </div>
+    </div>
+
+    <div class="label">Light Mode Overrides</div>
+    <div class="color-grid">
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#F7F7F8;border:1px solid #eee"></div>
+        <div class="swatch-info"><div class="swatch-name">bg/base ☀️</div><div class="swatch-hex">#F7F7F8</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#FFFFFF;border:1px solid #eee"></div>
+        <div class="swatch-info"><div class="swatch-name">bg/card ☀️</div><div class="swatch-hex">#FFFFFF</div></div>
+      </div>
+      <div class="color-swatch">
+        <div class="swatch-block" style="background:#7CFF00"></div>
+        <div class="swatch-info"><div class="swatch-name">primary ☀️</div><div class="swatch-hex">#7CFF00</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 02 TYPOGRAPHY                                    -->
+  <!-- ================================================ -->
+  <section class="section" id="typography">
+    <div class="section-header">
+      <h2 class="section-title">Typography</h2>
+      <span class="section-tag">02 / FOUNDATION</span>
+    </div>
+    <p class="section-desc">DM Sans for UI — approachable, rounded, and highly legible at small sizes. Space Mono for tokens, specs, and data. Max 2 lines per block. Numbers are heroes.</p>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-token">text/h1</div>
+        <div class="type-spec">28px · Bold · −0.5px</div>
+      </div>
+      <div style="font-size:28px;font-weight:700;letter-spacing:-0.5px;color:var(--text-primary)">Your child is doing great! 🌟</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-token">text/h2</div>
+        <div class="type-spec">22px · SemiBold</div>
+      </div>
+      <div style="font-size:22px;font-weight:600;color:var(--text-primary)">Bus arriving in 4 min</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-token">text/h3</div>
+        <div class="type-spec">18px · SemiBold</div>
+      </div>
+      <div style="font-size:18px;font-weight:600;color:var(--text-primary)">Today's Schedule</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-token">text/body</div>
+        <div class="type-spec">16px · Regular</div>
+      </div>
+      <div style="font-size:16px;color:var(--text-secondary)">Aarav finished his painting activity and loved it.</div>
+    </div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-token">text/caption</div>
+        <div class="type-spec">12px · Medium</div>
+      </div>
+      <div style="font-size:12px;font-weight:500;color:var(--text-secondary)">Activity completed · 10:30 AM</div>
+    </div>
+
+    <div class="type-row" style="border:none">
+      <div class="type-meta">
+        <div class="type-token">text/micro</div>
+        <div class="type-spec">10px · SemiBold · Mono</div>
+      </div>
+      <div style="font-size:10px;font-weight:600;color:var(--text-tertiary);font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:1.2px">ATTENDANCE · TODAY</div>
+    </div>
+
+    <div class="mt-4">
+      <div class="label">Number as Hero</div>
+      <div class="flex-wrap">
+        <div style="text-align:center;padding:20px 32px;background:var(--bg-card);border-radius:var(--r-xl);border:1px solid var(--border-card)">
+          <div style="font-size:56px;font-weight:700;color:var(--success);line-height:1;letter-spacing:-2px">24</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;font-weight:500">Present Today</div>
+        </div>
+        <div style="text-align:center;padding:20px 32px;background:var(--bg-card);border-radius:var(--r-xl);border:1px solid var(--border-card)">
+          <div style="font-size:56px;font-weight:700;color:var(--secondary-blue);line-height:1;letter-spacing:-2px">8m</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;font-weight:500">Bus ETA</div>
+        </div>
+        <div style="text-align:center;padding:20px 32px;background:var(--bg-card);border-radius:var(--r-xl);border:1px solid var(--border-card)">
+          <div style="font-size:56px;font-weight:700;color:var(--primary-main);line-height:1;letter-spacing:-2px">🌟</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:6px;font-weight:500">Star of the Day</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 03 SPACING                                       -->
+  <!-- ================================================ -->
+  <section class="section" id="spacing">
+    <div class="section-header">
+      <h2 class="section-title">Spacing System</h2>
+      <span class="section-tag">03 / FOUNDATION</span>
+    </div>
+    <p class="section-desc">Strict 4pt grid. Consistent rhythm creates visual trust.</p>
+    <div class="spacing-grid">
+      <div class="spacing-row"><div class="spacing-label">--s-1</div><div class="spacing-bar" style="width:4px"></div><div class="spacing-token">4px · Micro gap</div></div>
+      <div class="spacing-row"><div class="spacing-label">--s-2</div><div class="spacing-bar" style="width:8px"></div><div class="spacing-token">8px · Icon gap</div></div>
+      <div class="spacing-row"><div class="spacing-label">--s-3</div><div class="spacing-bar" style="width:12px"></div><div class="spacing-token">12px · Between cards</div></div>
+      <div class="spacing-row"><div class="spacing-label">--s-4</div><div class="spacing-bar" style="width:16px"></div><div class="spacing-token">16px · Card padding / margins</div></div>
+      <div class="spacing-row"><div class="spacing-label">--s-5</div><div class="spacing-bar" style="width:20px"></div><div class="spacing-token">20px · Section spacing</div></div>
+      <div class="spacing-row"><div class="spacing-label">--s-6</div><div class="spacing-bar" style="width:24px"></div><div class="spacing-token">24px · Large sections</div></div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 04 RADIUS                                        -->
+  <!-- ================================================ -->
+  <section class="section" id="radius">
+    <div class="section-header">
+      <h2 class="section-title">Radius System</h2>
+      <span class="section-tag">04 / FOUNDATION</span>
+    </div>
+    <div class="radius-demos">
+      <div class="radius-demo">
+        <div class="radius-shape" style="border-radius:8px"></div>
+        <div class="radius-label">--r-sm<br>8px · Input, Chip inner</div>
+      </div>
+      <div class="radius-demo">
+        <div class="radius-shape" style="border-radius:12px"></div>
+        <div class="radius-label">--r-md<br>12px · Metric cell</div>
+      </div>
+      <div class="radius-demo">
+        <div class="radius-shape" style="border-radius:16px"></div>
+        <div class="radius-label">--r-lg<br>16px · Media, Feed</div>
+      </div>
+      <div class="radius-demo">
+        <div class="radius-shape" style="border-radius:20px"></div>
+        <div class="radius-label">--r-xl<br>20px · Main cards</div>
+      </div>
+      <div class="radius-demo">
+        <div class="radius-shape" style="border-radius:9999px;width:80px;height:80px"></div>
+        <div class="radius-label">--r-pill<br>9999px · Buttons, Chips</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 05 ICONS                                         -->
+  <!-- ================================================ -->
+  <section class="section" id="icons">
+    <div class="section-header">
+      <h2 class="section-title">Icon System</h2>
+      <span class="section-tag">05 / FOUNDATION</span>
+    </div>
+    <p class="section-desc">Emoji-first for emotional warmth. Replace text labels wherever possible. Each icon carries instant meaning with zero reading required.</p>
+    <div class="icon-grid">
+      <div class="icon-cell"><div class="icon-emoji">🏠</div><div class="icon-name">Home</div></div>
+      <div class="icon-cell"><div class="icon-emoji">📋</div><div class="icon-name">Attendance</div></div>
+      <div class="icon-cell"><div class="icon-emoji">🚌</div><div class="icon-name">Bus</div></div>
+      <div class="icon-cell"><div class="icon-emoji">📸</div><div class="icon-name">Gallery</div></div>
+      <div class="icon-cell"><div class="icon-emoji">🎨</div><div class="icon-name">Activity</div></div>
+      <div class="icon-cell"><div class="icon-emoji">🍎</div><div class="icon-name">Meal</div></div>
+      <div class="icon-cell"><div class="icon-emoji">😊</div><div class="icon-name">Happy</div></div>
+      <div class="icon-cell"><div class="icon-emoji">😴</div><div class="icon-name">Nap</div></div>
+      <div class="icon-cell"><div class="icon-emoji">⭐</div><div class="icon-name">Star</div></div>
+      <div class="icon-cell"><div class="icon-emoji">🔔</div><div class="icon-name">Alert</div></div>
+      <div class="icon-cell"><div class="icon-emoji">💬</div><div class="icon-name">Message</div></div>
+      <div class="icon-cell"><div class="icon-emoji">📍</div><div class="icon-name">Location</div></div>
+      <div class="icon-cell"><div class="icon-emoji">✅</div><div class="icon-name">Done</div></div>
+      <div class="icon-cell"><div class="icon-emoji">⚠️</div><div class="icon-name">Warning</div></div>
+      <div class="icon-cell"><div class="icon-emoji">🎵</div><div class="icon-name">Music</div></div>
+      <div class="icon-cell"><div class="icon-emoji">📖</div><div class="icon-name">Story</div></div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 06 CARDS                                         -->
+  <!-- ================================================ -->
+  <section class="section" id="cards">
+    <div class="section-header">
+      <h2 class="section-title">Cards</h2>
+      <span class="section-tag">06 / COMPONENTS</span>
+    </div>
+    <p class="section-desc">The fundamental building block. Cards hold context and collapse/expand. Tap any card to feel the spring interaction.</p>
+    <div class="component-row">
+      <div>
+        <div class="label">Default</div>
+        <div class="card" style="width:240px">
+          <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:var(--s-2)">CLASS TODAY</div>
+          <div style="font-size:20px;font-weight:700;color:var(--text-primary)">Butterflies 🦋</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:4px">Room 4 · Ms. Priya</div>
+          <div class="progress-track" style="margin-top:var(--s-3)">
+            <div class="progress-bar" style="width:72%"></div>
+          </div>
+          <div style="font-size:11px;color:var(--text-secondary);margin-top:6px">72% attendance this week</div>
+        </div>
+      </div>
+      <div>
+        <div class="label">Elevated (bg/elevated)</div>
+        <div class="card card-elevated" style="width:240px">
+          <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:var(--s-2)">NEXT UP</div>
+          <div style="display:flex;align-items:center;gap:var(--s-3)">
+            <span style="font-size:32px">🎨</span>
+            <div>
+              <div style="font-size:16px;font-weight:700;color:var(--text-primary)">Art & Craft</div>
+              <div style="font-size:13px;color:var(--text-secondary)">Starts in 15 min</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="label">Glow (primary accent)</div>
+        <div class="card card-glow" style="width:240px">
+          <div style="font-size:12px;font-weight:600;color:var(--primary-main);margin-bottom:var(--s-2)">🌟 STAR OF THE DAY</div>
+          <div style="font-size:20px;font-weight:700;color:var(--text-primary)">Aarav Sharma</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:4px)">"Helped his friend during lunch"</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 07 BUTTONS                                       -->
+  <!-- ================================================ -->
+  <section class="section" id="buttons">
+    <div class="section-header">
+      <h2 class="section-title">Buttons</h2>
+      <span class="section-tag">07 / COMPONENTS</span>
+    </div>
+
+    <div class="label">Primary Actions</div>
+    <div class="flex-wrap" style="margin-bottom:var(--s-5)">
+      <button class="btn btn-primary">Mark Attendance</button>
+      <button class="btn btn-primary">✅ Check In</button>
+      <button class="btn btn-primary btn-sm">Confirm</button>
+      <button class="btn btn-primary" disabled>Submitted</button>
+    </div>
+
+    <div class="label">Secondary Actions</div>
+    <div class="flex-wrap" style="margin-bottom:var(--s-5)">
+      <button class="btn btn-secondary">View All</button>
+      <button class="btn btn-secondary">📸 Gallery</button>
+      <button class="btn btn-secondary btn-sm">Filter</button>
+    </div>
+
+    <div class="label">Ghost & Danger</div>
+    <div class="flex-wrap">
+      <button class="btn btn-ghost">Send Message</button>
+      <button class="btn btn-danger">🚨 Report Issue</button>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 08 CHIPS                                         -->
+  <!-- ================================================ -->
+  <section class="section" id="chips">
+    <div class="section-header">
+      <h2 class="section-title">Chips / Filters</h2>
+      <span class="section-tag">08 / COMPONENTS</span>
+    </div>
+    <p class="section-desc">One-tap filtering. Always horizontal scroll. Maximum 6 per strip.</p>
+
+    <div class="label">Feed Filter Strip</div>
+    <div class="flex-wrap" style="margin-bottom:var(--s-5)">
+      <div class="chip active"><div class="chip-dot"></div>All</div>
+      <div class="chip">🎨 Activities</div>
+      <div class="chip">📸 Photos</div>
+      <div class="chip">🍎 Meals</div>
+      <div class="chip">😴 Naps</div>
+      <div class="chip">🚌 Transport</div>
+    </div>
+
+    <div class="label">Attendance Filter</div>
+    <div class="flex-wrap">
+      <div class="chip active"><div class="chip-dot" style="background:var(--success)"></div>Present (22)</div>
+      <div class="chip"><div class="chip-dot" style="background:var(--error)"></div>Absent (2)</div>
+      <div class="chip"><div class="chip-dot" style="background:var(--warning)"></div>Late (1)</div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 09 NAVIGATION                                    -->
+  <!-- ================================================ -->
+  <section class="section" id="navigation">
+    <div class="section-header">
+      <h2 class="section-title">Bottom Navigation</h2>
+      <span class="section-tag">09 / COMPONENTS</span>
+    </div>
+    <p class="section-desc">Floating pill nav. Height 72px. Max 4 items. Active state uses primary green fill. Haptic-first design.</p>
+
+    <div class="label">Teacher App</div>
+    <div class="bottom-nav-wrap" style="margin-bottom:var(--s-5)">
+      <div class="bnav-item active">
+        <div class="bnav-icon">🏠</div>
+        <div class="bnav-label">Home</div>
+      </div>
+      <div class="bnav-item">
+        <div class="bnav-icon">📋</div>
+        <div class="bnav-label">Class</div>
+        <div class="bnav-badge"></div>
+      </div>
+      <div class="bnav-item">
+        <div class="bnav-icon">📸</div>
+        <div class="bnav-label">Gallery</div>
+      </div>
+      <div class="bnav-item">
+        <div class="bnav-icon">💬</div>
+        <div class="bnav-label">Msgs</div>
+      </div>
+    </div>
+
+    <div class="label">Parent App</div>
+    <div class="bottom-nav-wrap" style="margin-bottom:var(--s-5)">
+      <div class="bnav-item active">
+        <div class="bnav-icon">🏠</div>
+        <div class="bnav-label">Home</div>
+      </div>
+      <div class="bnav-item">
+        <div class="bnav-icon">📖</div>
+        <div class="bnav-label">Feed</div>
+        <div class="bnav-badge"></div>
+      </div>
+      <div class="bnav-item">
+        <div class="bnav-icon">🚌</div>
+        <div class="bnav-label">Bus</div>
+      </div>
+      <div class="bnav-item">
+        <div class="bnav-icon">👤</div>
+        <div class="bnav-label">Profile</div>
+      </div>
+    </div>
+
+    <div class="label">Driver App</div>
+    <div class="bottom-nav-wrap">
+      <div class="bnav-item active">
+        <div class="bnav-icon">🗺️</div>
+        <div class="bnav-label">Route</div>
+      </div>
+      <div class="bnav-item">
+        <div class="bnav-icon">👶</div>
+        <div class="bnav-label">Kids</div>
+      </div>
+      <div class="bnav-item">
+        <div class="bnav-icon">🔔</div>
+        <div class="bnav-label">Alerts</div>
+        <div class="bnav-badge"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 10 FAB                                           -->
+  <!-- ================================================ -->
+  <section class="section" id="fab">
+    <div class="section-header">
+      <h2 class="section-title">Floating Action Button</h2>
+      <span class="section-tag">10 / COMPONENTS</span>
+    </div>
+    <p class="section-desc">56×56px. One primary action per screen. Hover to see the rotation spring. Used for Gallery add, New Message, and SOS.</p>
+
+    <div class="flex-wrap">
+      <div>
+        <div class="label">Gallery / Create</div>
+        <button class="fab">📸</button>
+      </div>
+      <div>
+        <div class="label">New Message</div>
+        <button class="fab fab-blue">💬</button>
+      </div>
+      <div>
+        <div class="label">Add Activity</div>
+        <button class="fab" style="background:var(--accent-yellow);color:#121212;box-shadow:var(--shadow-float),0 0 24px rgba(255,216,77,0.3)">+</button>
+      </div>
+      <div>
+        <div class="label">SOS / Alert</div>
+        <button class="fab" style="background:var(--error);box-shadow:var(--shadow-float),0 0 24px rgba(255,92,92,0.3)">🚨</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 11 FEED CARD                                     -->
+  <!-- ================================================ -->
+  <section class="section" id="feed">
+    <div class="section-header">
+      <h2 class="section-title">Feed Card</h2>
+      <span class="section-tag">11 / COMPONENTS</span>
+    </div>
+    <p class="section-desc">The primary content unit. Profile row + content + media (16:9) + action row. Maximum 2 lines of text. Media is always shown.</p>
+
+    <div class="component-row">
+      <!-- Activity Feed Card -->
+      <div class="feed-card">
+        <div class="feed-card-header">
+          <div class="avatar avatar-green">MS</div>
+          <div class="feed-meta">
+            <div class="feed-name">Ms. Sonal Mehta</div>
+            <div class="feed-time">Today · 10:32 AM</div>
+          </div>
+          <div class="feed-badge" style="background:rgba(182,255,59,0.12)">🎨</div>
+        </div>
+        <div class="feed-media">
+          <div class="media-placeholder">🖼️<span>Photo · Art Activity</span></div>
+          <div class="media-tag">📸 Photo</div>
+        </div>
+        <div class="feed-content">
+          <strong>Aarav</strong> created a beautiful finger painting today. He used so many colors! 🌈
+        </div>
+        <div class="feed-actions">
+          <button class="feed-action-btn">❤️ Love</button>
+          <button class="feed-action-btn">💬 Reply</button>
+          <button class="feed-action-btn" style="margin-left:auto">🔖</button>
+        </div>
+      </div>
+
+      <!-- Attendance Feed Card -->
+      <div class="feed-card">
+        <div class="feed-card-header">
+          <div class="avatar avatar-blue">SY</div>
+          <div class="feed-meta">
+            <div class="feed-name">System · Attendance</div>
+            <div class="feed-time">Today · 8:45 AM</div>
+          </div>
+          <div class="feed-badge" style="background:rgba(76,175,80,0.12)">✅</div>
+        </div>
+        <div style="padding:var(--s-3) var(--s-4);margin-bottom:var(--s-2)">
+          <div style="background:linear-gradient(135deg,rgba(76,175,80,0.12),rgba(77,166,255,0.08));border:1px solid rgba(76,175,80,0.2);border-radius:var(--r-lg);padding:var(--s-4);display:flex;align-items:center;gap:var(--s-4)">
+            <div style="font-size:40px">✅</div>
+            <div>
+              <div style="font-size:20px;font-weight:700;color:var(--success)">Checked In</div>
+              <div style="font-size:13px;color:var(--text-secondary)">Aarav arrived safely at school</div>
+            </div>
+          </div>
+        </div>
+        <div class="feed-actions">
+          <button class="feed-action-btn">👀 View Details</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 12 SUMMARY CARD                                  -->
+  <!-- ================================================ -->
+  <section class="section" id="summary">
+    <div class="section-header">
+      <h2 class="section-title">Summary Card</h2>
+      <span class="section-tag">12 / COMPONENTS</span>
+    </div>
+    <p class="section-desc">2×2 metric grid. Numbers lead. Each cell is independently tappable for drill-down. Color-coded by semantic meaning.</p>
+
+    <div class="component-row">
+      <div>
+        <div class="label">Teacher Dashboard</div>
+        <div class="summary-card">
+          <div class="summary-title">📊 Today's Class</div>
+          <div class="summary-grid">
+            <div class="metric-cell accent-green">
+              <div class="metric-icon">✅</div>
+              <div class="metric-value">22</div>
+              <div class="metric-label">Present</div>
+            </div>
+            <div class="metric-cell accent-red">
+              <div class="metric-icon">❌</div>
+              <div class="metric-value">2</div>
+              <div class="metric-label">Absent</div>
+            </div>
+            <div class="metric-cell accent-yellow">
+              <div class="metric-icon">⏰</div>
+              <div class="metric-value">1</div>
+              <div class="metric-label">Late</div>
+            </div>
+            <div class="metric-cell accent-blue">
+              <div class="metric-icon">🎨</div>
+              <div class="metric-value">3</div>
+              <div class="metric-label">Activities</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="label">Parent Dashboard</div>
+        <div class="summary-card">
+          <div class="summary-title">⭐ Aarav This Week</div>
+          <div class="summary-grid">
+            <div class="metric-cell accent-green">
+              <div class="metric-icon">📅</div>
+              <div class="metric-value">5/5</div>
+              <div class="metric-label">Present</div>
+            </div>
+            <div class="metric-cell accent-blue">
+              <div class="metric-icon">🎨</div>
+              <div class="metric-value">12</div>
+              <div class="metric-label">Activities</div>
+            </div>
+            <div class="metric-cell accent-yellow">
+              <div class="metric-icon">😊</div>
+              <div class="metric-value">4.8</div>
+              <div class="metric-label">Mood avg</div>
+            </div>
+            <div class="metric-cell">
+              <div class="metric-icon">📸</div>
+              <div class="metric-value">18</div>
+              <div class="metric-label">Photos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="label">Driver Dashboard</div>
+        <div class="summary-card">
+          <div class="summary-title">🚌 Today's Route</div>
+          <div class="summary-grid">
+            <div class="metric-cell accent-blue">
+              <div class="metric-icon">👶</div>
+              <div class="metric-value">14</div>
+              <div class="metric-label">On Board</div>
+            </div>
+            <div class="metric-cell accent-green">
+              <div class="metric-icon">🏫</div>
+              <div class="metric-value">3</div>
+              <div class="metric-label">Stops Left</div>
+            </div>
+            <div class="metric-cell">
+              <div class="metric-icon">📍</div>
+              <div class="metric-value">8m</div>
+              <div class="metric-label">ETA</div>
+            </div>
+            <div class="metric-cell accent-yellow">
+              <div class="metric-icon">⛽</div>
+              <div class="metric-value">78%</div>
+              <div class="metric-label">Fuel</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 13 STATUS CARD                                   -->
+  <!-- ================================================ -->
+  <section class="section" id="status">
+    <div class="section-header">
+      <h2 class="section-title">Status Card</h2>
+      <span class="section-tag">13 / COMPONENTS</span>
+    </div>
+    <p class="section-desc">Attendance, mood, and activity status at a glance. Live-pulsing dot signals real-time state.</p>
+
+    <div class="component-row">
+      <div>
+        <div class="label">Attendance · Teacher View</div>
+        <div class="status-card">
+          <div class="status-header">
+            <div class="status-heading">Attendance</div>
+            <div class="status-pill present">Live</div>
+          </div>
+          <div class="status-kids">
+            <div class="kid-row">
+              <div class="avatar avatar-green" style="width:32px;height:32px;font-size:12px">AS</div>
+              <div class="kid-name">Aarav Sharma</div>
+              <div class="mood-icon">😊</div>
+              <div class="status-pill present">✓</div>
+            </div>
+            <div class="kid-row">
+              <div class="avatar avatar-yellow" style="width:32px;height:32px;font-size:12px">PK</div>
+              <div class="kid-name">Priya Kumar</div>
+              <div class="mood-icon">😴</div>
+              <div class="status-pill late">Late</div>
+            </div>
+            <div class="kid-row">
+              <div class="avatar avatar-blue" style="width:32px;height:32px;font-size:12px">RG</div>
+              <div class="kid-name">Riya Gupta</div>
+              <div class="mood-icon">🤒</div>
+              <div class="status-pill absent">Away</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="label">Mood · Parent View</div>
+        <div class="status-card">
+          <div class="status-header">
+            <div class="status-heading">Aarav's Mood</div>
+            <div style="font-size:var(--text-caption);color:var(--text-secondary)">Updated now</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:var(--s-3)">
+            <div style="display:flex;justify-content:space-around;padding:var(--s-4) 0">
+              <div style="text-align:center;cursor:pointer;padding:var(--s-3);border-radius:var(--r-lg);border:2px solid var(--primary-main);background:var(--primary-subtle)">
+                <div style="font-size:32px">😊</div>
+                <div style="font-size:11px;color:var(--primary-main);font-weight:600;margin-top:4px">Happy</div>
+              </div>
+              <div style="text-align:center;cursor:pointer;padding:var(--s-3);border-radius:var(--r-lg);opacity:0.5">
+                <div style="font-size:32px">😐</div>
+                <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">Okay</div>
+              </div>
+              <div style="text-align:center;cursor:pointer;padding:var(--s-3);border-radius:var(--r-lg);opacity:0.5">
+                <div style="font-size:32px">😢</div>
+                <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">Sad</div>
+              </div>
+              <div style="text-align:center;cursor:pointer;padding:var(--s-3);border-radius:var(--r-lg);opacity:0.5">
+                <div style="font-size:32px">😠</div>
+                <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">Upset</div>
+              </div>
+            </div>
+            <div style="background:var(--overlay-soft);border-radius:var(--r-md);padding:var(--s-3);font-size:13px;color:var(--text-secondary)">
+              "Aarav is doing great! Very active during art time 🎨"
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 14 NOTIFICATIONS                                 -->
+  <!-- ================================================ -->
+  <section class="section" id="notifications">
+    <div class="section-header">
+      <h2 class="section-title">Notifications</h2>
+      <span class="section-tag">14 / COMPONENTS</span>
+    </div>
+    <p class="section-desc">Slide-in from right. Tap to expand. Swipe left to dismiss. Context-colored left border.</p>
+
+    <div class="flex-col">
+      <div class="notif-card" style="border-left:3px solid var(--success)">
+        <div class="notif-icon-wrap" style="background:rgba(76,175,80,0.12)">✅</div>
+        <div class="notif-body">
+          <div class="notif-title">Aarav checked in!</div>
+          <div class="notif-desc">Your child arrived safely at school. All good today 😊</div>
+          <div class="notif-time">Just now</div>
+        </div>
+      </div>
+
+      <div class="notif-card" style="border-left:3px solid var(--secondary-blue)">
+        <div class="notif-icon-wrap" style="background:rgba(77,166,255,0.12)">🚌</div>
+        <div class="notif-body">
+          <div class="notif-title">Bus arriving soon</div>
+          <div class="notif-desc">Bus #12 is 5 minutes away. Get ready! 🏃</div>
+          <div class="notif-time">4 min ago</div>
+        </div>
+      </div>
+
+      <div class="notif-card" style="border-left:3px solid var(--primary-main)">
+        <div class="notif-icon-wrap" style="background:rgba(182,255,59,0.1)">📸</div>
+        <div class="notif-body">
+          <div class="notif-title">3 new photos added</div>
+          <div class="notif-desc">Ms. Sonal shared photos from today's art session</div>
+          <div class="notif-time">10:45 AM</div>
+        </div>
+      </div>
+
+      <div class="notif-card" style="border-left:3px solid var(--error)">
+        <div class="notif-icon-wrap" style="background:rgba(255,92,92,0.12)">⚠️</div>
+        <div class="notif-body">
+          <div class="notif-title">Absence reported</div>
+          <div class="notif-desc">Riya Gupta is marked absent today. Parent notified.</div>
+          <div class="notif-time">9:00 AM</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 15 MOTION SYSTEM                                 -->
+  <!-- ================================================ -->
+  <section class="section" id="motion">
+    <div class="section-header">
+      <h2 class="section-title">Motion System</h2>
+      <span class="section-tag">15 / SYSTEM</span>
+    </div>
+    <p class="section-desc">Every interaction has motion. Click each card to trigger the animation. Motion is feedback — not decoration.</p>
+
+    <div class="motion-grid">
+      <div class="motion-demo tap-demo" onclick="this.classList.toggle('tapped')">
+        <div class="motion-target">👆</div>
+        <div class="motion-demo-label">Tap Response</div>
+        <div class="motion-demo-spec">scale(0.96) · 150ms</div>
+      </div>
+
+      <div class="motion-demo" onclick="triggerMotion(this,'bounce')">
+        <div class="motion-target">⭐</div>
+        <div class="motion-demo-label">Success Bounce</div>
+        <div class="motion-demo-spec">spring · 500ms</div>
+      </div>
+
+      <div class="motion-demo" onclick="triggerMotion(this,'shake')">
+        <div class="motion-target blue">❌</div>
+        <div class="motion-demo-label">Error Shake</div>
+        <div class="motion-demo-spec">linear · 400ms</div>
+      </div>
+
+      <div class="motion-demo pulse">
+        <div class="motion-target yellow">⏳</div>
+        <div class="motion-demo-label">Loading Pulse</div>
+        <div class="motion-demo-spec">ease · 1.2s loop</div>
+      </div>
+
+      <div class="motion-demo" style="cursor:default">
+        <div style="width:48px;height:48px;border-radius:50%;border:3px solid var(--border-card);border-top-color:var(--primary-main);animation:spin 0.8s linear infinite"></div>
+        <div class="motion-demo-label">Loading Spinner</div>
+        <div class="motion-demo-spec">linear · 800ms loop</div>
+      </div>
+
+      <div class="motion-demo" onclick="triggerFloat(this)">
+        <div class="motion-target" style="animation:float 3s ease-in-out infinite">🏠</div>
+        <div class="motion-demo-label">Idle Float</div>
+        <div class="motion-demo-spec">ease · 3s loop</div>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <div class="label">Timing Tokens</div>
+      <table class="token-table">
+        <thead>
+          <tr>
+            <th>Token</th>
+            <th>Value</th>
+            <th>Use Case</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="token-name">--dur-fast</td><td>150ms</td><td>Tap, press, hover state changes</td></tr>
+          <tr><td class="token-name">--dur-med</td><td>280ms</td><td>Card transitions, chip activate</td></tr>
+          <tr><td class="token-name">--dur-slow</td><td>450ms</td><td>Page transitions, expand/collapse</td></tr>
+          <tr><td class="token-name">--ease-spring</td><td>cubic-bezier(0.34,1.56,0.64,1)</td><td>Buttons, FAB, card hover</td></tr>
+          <tr><td class="token-name">--ease-smooth</td><td>cubic-bezier(0.4,0,0.2,1)</td><td>Color transitions, opacity</td></tr>
+          <tr><td class="token-name">--ease-snap</td><td>cubic-bezier(0.2,0,0,1)</td><td>Progress bars, slide-ins</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 16 STATES                                        -->
+  <!-- ================================================ -->
+  <section class="section" id="states">
+    <div class="section-header">
+      <h2 class="section-title">System States</h2>
+      <span class="section-tag">16 / SYSTEM</span>
+    </div>
+
+    <div class="label" style="margin-bottom:var(--s-4)">Loading — Skeleton</div>
+    <div class="component-row" style="margin-bottom:var(--s-6)">
+      <div class="skeleton-card">
+        <div class="skel-row">
+          <div class="skel skel-circle"></div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <div class="skel skel-line" style="width:60%"></div>
+            <div class="skel skel-line" style="width:40%"></div>
+          </div>
+        </div>
+        <div class="skel skel-media"></div>
+        <div class="skel skel-line" style="width:100%;margin-bottom:6px"></div>
+        <div class="skel skel-line" style="width:75%"></div>
+      </div>
+
+      <div class="skeleton-card">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--s-3)">
+          <div class="skel" style="height:80px;border-radius:var(--r-lg)"></div>
+          <div class="skel" style="height:80px;border-radius:var(--r-lg)"></div>
+          <div class="skel" style="height:80px;border-radius:var(--r-lg)"></div>
+          <div class="skel" style="height:80px;border-radius:var(--r-lg)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="label" style="margin-bottom:var(--s-4)">Empty State</div>
+    <div class="component-row" style="margin-bottom:var(--s-6)">
+      <div class="empty-state">
+        <div class="empty-emoji">📭</div>
+        <div class="empty-title">No updates yet</div>
+        <div class="empty-desc">Your child's teacher will share photos and updates here</div>
+        <button class="btn btn-primary btn-sm">🔔 Enable Alerts</button>
+      </div>
+      <div class="empty-state">
+        <div class="empty-emoji">🚌</div>
+        <div class="empty-title">Bus not started</div>
+        <div class="empty-desc">Route starts at 7:30 AM. You'll get a notification!</div>
+      </div>
+    </div>
+
+    <div class="label" style="margin-bottom:var(--s-4)">Error & Offline States</div>
+    <div class="component-row">
+      <div class="state-card">
+        <div class="state-icon">⚠️</div>
+        <div class="state-title">Something went wrong</div>
+        <div class="state-desc">We couldn't load the feed right now</div>
+        <button class="btn btn-secondary btn-sm">↺ Try Again</button>
+      </div>
+      <div class="state-card" style="border-color:rgba(77,166,255,0.2)">
+        <div class="state-icon">📡</div>
+        <div class="state-title">You're offline</div>
+        <div class="state-desc">Connect to internet to see live updates</div>
+        <button class="btn btn-ghost btn-sm">Retry</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 17 PATTERNS                                      -->
+  <!-- ================================================ -->
+  <section class="section" id="patterns">
+    <div class="section-header">
+      <h2 class="section-title">Screen Patterns</h2>
+      <span class="section-tag">17 / PATTERNS</span>
+    </div>
+    <p class="section-desc">Real device-frame previews. 390×844 mobile. 16px margins. Cards stack with 12px gap. Floating nav sits above content.</p>
+
+    <div class="flex-wrap" style="gap:var(--s-6)">
+
+      <!-- Teacher Dashboard Phone -->
+      <div>
+        <div class="label">Teacher Dashboard</div>
+        <div class="phone-frame" style="padding-bottom:80px">
+          <div class="phone-status-bar">
+            <span>9:41</span>
+            <span>●●● 📶 🔋</span>
+          </div>
+          <div class="phone-body">
+            <div class="phone-greeting">Good morning,<br><span>Ms. Sonal! 👋</span></div>
+
+            <div class="mini-summary">
+              <div style="font-size:10px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px">📊 Today's Class</div>
+              <div class="mini-summary-grid">
+                <div class="mini-metric"><div class="mini-metric-val" style="color:var(--success)">22</div><div class="mini-metric-label">Present</div></div>
+                <div class="mini-metric"><div class="mini-metric-val" style="color:var(--error)">2</div><div class="mini-metric-label">Absent</div></div>
+                <div class="mini-metric"><div class="mini-metric-val" style="color:var(--secondary-blue)">3</div><div class="mini-metric-label">Activities</div></div>
+                <div class="mini-metric"><div class="mini-metric-val" style="color:var(--accent-yellow)">1</div><div class="mini-metric-label">Late</div></div>
+              </div>
+            </div>
+
+            <div class="activity-strip">
+              <div class="activity-icon">🎨</div>
+              <div class="activity-info">
+                <div class="activity-name">Art & Craft Session</div>
+                <div class="activity-time">Starts in 15 min</div>
+              </div>
+              <button class="btn btn-primary" style="height:32px;padding:0 12px;font-size:12px">Start</button>
+            </div>
+
+            <div class="quick-actions">
+              <div class="quick-action"><div class="qa-icon">📋</div><div class="qa-label">Mark<br>Attendance</div></div>
+              <div class="quick-action"><div class="qa-icon">📸</div><div class="qa-label">Add<br>Photo</div></div>
+              <div class="quick-action"><div class="qa-icon">💬</div><div class="qa-label">Message<br>Parents</div></div>
+              <div class="quick-action"><div class="qa-icon">📖</div><div class="qa-label">Log<br>Activity</div></div>
+            </div>
+
+            <div class="mini-feed-card">
+              <div class="mini-avatar avatar-blue">RK</div>
+              <div class="mini-feed-text"><strong>Rahul Kumar</strong> sent a message about Aarav's lunch</div>
+              <div style="font-size:11px;color:var(--text-secondary)">2m</div>
+            </div>
+          </div>
+
+          <div class="phone-bnav">
+            <div class="phone-bnav-item active">🏠</div>
+            <div class="phone-bnav-item">📋</div>
+            <div class="phone-bnav-item">📸</div>
+            <div class="phone-bnav-item">💬</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Parent Dashboard Phone -->
+      <div>
+        <div class="label">Parent App</div>
+        <div class="phone-frame" style="padding-bottom:80px">
+          <div class="phone-status-bar">
+            <span>9:41</span>
+            <span>●●● 📶 🔋</span>
+          </div>
+          <div class="phone-body">
+            <div class="phone-greeting">Aarav is<br><span>doing great! 🌟</span></div>
+
+            <div class="activity-strip">
+              <div class="activity-icon" style="background:var(--secondary-blue);font-size:16px">📍</div>
+              <div class="activity-info">
+                <div class="activity-name">Bus #12 is on the way</div>
+                <div class="activity-time" style="color:var(--secondary-blue)">ETA 8 minutes</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <div class="chip active"><div class="chip-dot"></div>All</div>
+              <div class="chip" style="font-size:11px;padding:0 10px">🎨 Activities</div>
+              <div class="chip" style="font-size:11px;padding:0 10px">📸 Photos</div>
+            </div>
+
+            <div class="mini-feed-card">
+              <div class="mini-avatar avatar-green">SM</div>
+              <div class="mini-feed-text"><strong>Ms. Sonal</strong> shared a photo from art class 🎨</div>
+              <div style="font-size:11px;color:var(--text-secondary)">10m</div>
+            </div>
+
+            <div class="mini-feed-card">
+              <div class="mini-avatar" style="background:rgba(76,175,80,0.15);font-size:16px">✅</div>
+              <div class="mini-feed-text"><strong>Aarav</strong> checked in at school safely at 8:42 AM</div>
+              <div style="font-size:11px;color:var(--text-secondary)">1h</div>
+            </div>
+
+            <div class="mini-summary" style="background:var(--bg-card)">
+              <div style="font-size:10px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:8px">⭐ This Week</div>
+              <div class="mini-summary-grid">
+                <div class="mini-metric"><div class="mini-metric-val" style="color:var(--success)">5/5</div><div class="mini-metric-label">Present</div></div>
+                <div class="mini-metric"><div class="mini-metric-val" style="color:var(--secondary-blue)">12</div><div class="mini-metric-label">Activities</div></div>
+                <div class="mini-metric"><div class="mini-metric-val" style="color:var(--accent-yellow)">4.8</div><div class="mini-metric-label">Mood</div></div>
+                <div class="mini-metric"><div class="mini-metric-val">18</div><div class="mini-metric-label">Photos</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="phone-bnav">
+            <div class="phone-bnav-item active">🏠</div>
+            <div class="phone-bnav-item">📖</div>
+            <div class="phone-bnav-item">🚌</div>
+            <div class="phone-bnav-item">👤</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Driver App Phone -->
+      <div>
+        <div class="label">Driver App</div>
+        <div class="phone-frame" style="padding-bottom:80px">
+          <div class="phone-status-bar">
+            <span>9:41</span>
+            <span>●●● 📶 🔋</span>
+          </div>
+          <div class="phone-body">
+            <div class="phone-greeting">Route #12<br><span>Live 🟢</span></div>
+
+            <div style="background:var(--bg-card);border:1px solid var(--border-card);border-radius:var(--r-lg);aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-size:13px;flex-direction:column;gap:4px">
+              <div style="font-size:32px">🗺️</div>
+              <div style="font-weight:600">Live Map View</div>
+              <div style="font-size:11px">Turn-by-turn navigation</div>
+            </div>
+
+            <div class="mini-summary" style="background:var(--bg-card)">
+              <div class="mini-summary-grid">
+                <div class="mini-metric"><div class="mini-metric-val" style="color:var(--secondary-blue)">14</div><div class="mini-metric-label">On Board</div></div>
+                <div class="mini-metric"><div class="mini-metric-val" style="color:var(--success)">3</div><div class="mini-metric-label">Stops Left</div></div>
+                <div class="mini-metric"><div class="mini-metric-val">8m</div><div class="mini-metric-label">ETA</div></div>
+                <div class="mini-metric"><div class="mini-metric-val" style="color:var(--accent-yellow)">78%</div><div class="mini-metric-label">Fuel</div></div>
+              </div>
+            </div>
+
+            <div class="activity-strip">
+              <div class="activity-icon" style="font-size:18px">📍</div>
+              <div class="activity-info">
+                <div class="activity-name">Next: Banjara Hills Stop</div>
+                <div class="activity-time">2 kids to pick up</div>
+              </div>
+              <button class="btn btn-primary" style="height:32px;padding:0 12px;font-size:12px">Nav</button>
+            </div>
+          </div>
+
+          <div class="phone-bnav">
+            <div class="phone-bnav-item active">🗺️</div>
+            <div class="phone-bnav-item">👶</div>
+            <div class="phone-bnav-item">🔔</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================================================ -->
+  <!-- 18 FIGMA TOKENS                                  -->
+  <!-- ================================================ -->
+  <section class="section" id="tokens">
+    <div class="section-header">
+      <h2 class="section-title">Figma Token Export</h2>
+      <span class="section-tag">18 / FIGMA</span>
+    </div>
+    <p class="section-desc">Copy into Figma Variables panel → Create Variable Collection → Set modes for Dark/Light. Use plugin "Tokens Studio" to import the JSON below.</p>
+
+    <div class="code-block">
+<span class="cmt">// KidSpark Design Tokens — Figma Variables JSON</span>
+{
+  <span class="key">"color"</span>: {
+    <span class="cmt">// === DARK MODE (Default) ===</span>
+    <span class="key">"bg/base"</span>:      <span class="val">"#0F0F10"</span>,
+    <span class="key">"bg/card"</span>:      <span class="val">"#1A1A1C"</span>,
+    <span class="key">"bg/elevated"</span>:  <span class="val">"#222326"</span>,
+
+    <span class="key">"text/primary"</span>:   <span class="val">"#FFFFFF"</span>,
+    <span class="key">"text/secondary"</span>: <span class="val">"#A0A0A0"</span>,
+    <span class="key">"text/tertiary"</span>:  <span class="val">"#5A5A5E"</span>,
+
+    <span class="key">"primary/main"</span>:    <span class="val">"#B6FF3B"</span>,
+    <span class="key">"primary/pressed"</span>: <span class="val">"#9FE62F"</span>,
+
+    <span class="key">"secondary/blue"</span>:   <span class="val">"#4DA6FF"</span>,
+    <span class="key">"secondary/purple"</span>: <span class="val">"#B66DFF"</span>,
+    <span class="key">"accent/yellow"</span>:    <span class="val">"#FFD84D"</span>,
+
+    <span class="key">"semantic/success"</span>: <span class="val">"#4CAF50"</span>,
+    <span class="key">"semantic/warning"</span>: <span class="val">"#FFD84D"</span>,
+    <span class="key">"semantic/error"</span>:   <span class="val">"#FF5C5C"</span>,
+    <span class="key">"semantic/info"</span>:    <span class="val">"#4DA6FF"</span>
+  },
+  <span class="key">"radius"</span>: {
+    <span class="key">"sm"</span>: <span class="val">"8"</span>,  <span class="key">"md"</span>: <span class="val">"12"</span>,
+    <span class="key">"lg"</span>: <span class="val">"16"</span>, <span class="key">"xl"</span>: <span class="val">"20"</span>, <span class="key">"pill"</span>: <span class="val">"9999"</span>
+  },
+  <span class="key">"spacing"</span>: {
+    <span class="key">"s1"</span>: <span class="val">"4"</span>,  <span class="key">"s2"</span>: <span class="val">"8"</span>,  <span class="key">"s3"</span>: <span class="val">"12"</span>,
+    <span class="key">"s4"</span>: <span class="val">"16"</span>, <span class="key">"s5"</span>: <span class="val">"20"</span>, <span class="key">"s6"</span>: <span class="val">"24"</span>
+  },
+  <span class="key">"typography"</span>: {
+    <span class="key">"h1"</span>: { <span class="key">"size"</span>: <span class="val">"28"</span>, <span class="key">"weight"</span>: <span class="val">"700"</span> },
+    <span class="key">"h2"</span>: { <span class="key">"size"</span>: <span class="val">"22"</span>, <span class="key">"weight"</span>: <span class="val">"600"</span> },
+    <span class="key">"body"</span>: { <span class="key">"size"</span>: <span class="val">"16"</span>, <span class="key">"weight"</span>: <span class="val">"400"</span> },
+    <span class="key">"caption"</span>: { <span class="key">"size"</span>: <span class="val">"12"</span>, <span class="key">"weight"</span>: <span class="val">"500"</span> }
+  },
+  <span class="key">"motion"</span>: {
+    <span class="key">"dur/fast"</span>:  <span class="val">"150ms"</span>,
+    <span class="key">"dur/med"</span>:   <span class="val">"280ms"</span>,
+    <span class="key">"dur/slow"</span>:  <span class="val">"450ms"</span>,
+    <span class="key">"ease/spring"</span>: <span class="val">"cubic-bezier(0.34,1.56,0.64,1)"</span>
+  }
+}
+    </div>
+
+    <div class="mt-4">
+      <div class="label">Component Naming Convention</div>
+      <table class="token-table" style="margin-top:var(--s-3)">
+        <thead>
+          <tr><th>Component</th><th>Figma Frame Name</th><th>Variants</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Card</td><td class="token-name">Card/Base</td><td>Default, Pressed, Expanded, Glow</td></tr>
+          <tr><td>Button</td><td class="token-name">Button/Primary</td><td>Default, Pressed, Disabled, Small</td></tr>
+          <tr><td>Chip</td><td class="token-name">Chip/Filter</td><td>Active, Inactive, With Dot</td></tr>
+          <tr><td>Bottom Nav</td><td class="token-name">Nav/Bottom</td><td>Teacher, Parent, Driver</td></tr>
+          <tr><td>FAB</td><td class="token-name">FAB/Primary</td><td>Green, Blue, Yellow, Red</td></tr>
+          <tr><td>Feed Card</td><td class="token-name">Card/Feed</td><td>Photo, Activity, Attendance, Mood</td></tr>
+          <tr><td>Summary Card</td><td class="token-name">Card/Summary</td><td>2x2 Grid</td></tr>
+          <tr><td>Status Card</td><td class="token-name">Card/Status</td><td>Present, Absent, Late, Mood</td></tr>
+          <tr><td>Notification</td><td class="token-name">Notif/Row</td><td>Success, Info, Warning, Error</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<style>
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+// Theme toggle
+const html = document.documentElement;
+const toggle = document.getElementById('themeToggle');
+let isDark = true;
+
+function toggleTheme() {
+  isDark = !isDark;
+  html.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  toggle.classList.toggle('on', !isDark);
+}
+
+// Motion demos
+function triggerMotion(el, className) {
+  el.classList.remove(className);
+  void el.offsetWidth; // reflow
+  el.classList.add(className);
+  setTimeout(() => el.classList.remove(className), 600);
+}
+
+// Smooth scroll for nav items
+document.querySelectorAll('.ds-nav-item').forEach(item => {
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = this.getAttribute('href');
+    if (target) {
+      const el = document.querySelector(target);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    document.querySelectorAll('.ds-nav-item').forEach(i => i.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Active nav on scroll
+const sections = document.querySelectorAll('.section');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      document.querySelectorAll('.ds-nav-item').forEach(item => {
+        item.classList.toggle('active', item.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -60% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+// Card hover ripple feel (subtle)
+document.querySelectorAll('.card, .feed-card, .notif-card').forEach(card => {
+  card.addEventListener('mousedown', function(e) {
+    this.style.transition = 'transform 150ms cubic-bezier(0.34,1.56,0.64,1)';
+    this.style.transform = 'scale(0.98)';
+  });
+  card.addEventListener('mouseup', function() {
+    this.style.transform = '';
+  });
+  card.addEventListener('mouseleave', function() {
+    this.style.transform = '';
+  });
+});
+</script>
+
+</body>
+</html>
